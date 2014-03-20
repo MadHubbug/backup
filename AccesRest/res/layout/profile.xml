@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+     <LinearLayout
+        android:id="@+id/profheader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:gravity="center" 
+        >
+        
+         <ImageView
+             android:id="@+id/profilepic"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:src="@drawable/dp" />
+
+         <TextView
+             android:id="@+id/FullNameprof"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="John De Guzman" />
+
+         <TextView
+             android:id="@+id/UserNameprof"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="Madfresco"
+             android:textAppearance="?android:attr/textAppearanceSmall" />
+         
+</LinearLayout>
+         
+         <LinearLayout
+             android:id="@+id/follows"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content" 
+             android:gravity="center"
+             android:orientation="horizontal"
+            android:layout_below="@+id/profheader"
+             
+             android:background="@drawable/border">
+
+             <LinearLayout
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_marginBottom="10dp"
+                 android:layout_marginTop="10dp"
+                 android:layout_weight="1"
+                 
+                 android:clickable="true"
+                 android:gravity="center"
+                 android:orientation="vertical" >
+
+                 <TextView
+                     android:id="@+id/followertext"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:background="@android:color/transparent"
+                     android:text="0"
+                     android:textSize="14sp" />
+
+                 <TextView
+                     android:id="@+id/followerlabel"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:text="Followers"
+                     android:textSize="14sp" />
+             </LinearLayout>
+
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content" 
+             android:gravity="center"
+             android:orientation="vertical"
+             android:clickable="true"
+             android:layout_weight="1">
+             
+             <TextView
+                 android:id="@+id/followingtext"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:text="0"
+                 android:textSize="14sp" />
+
+             <TextView
+                 android:id="@+id/followinglabel"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:text="Following"
+                 android:textSize="14sp" />
+         </LinearLayout>
+         
+    </LinearLayout>
+    
+    
+    
+    <ListView
+        android:id="@+id/proflist"
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent"   
+        android:layout_above="@+id/footer"
+        android:layout_below="@+id/follows"
+        >
+        
+    </ListView>
+
+    <LinearLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="@color/grey"
+        android:orientation="horizontal"
+        android:gravity="center" 
+        >
+
+        <ImageButton
+            android:id="@+id/notif"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            
+            android:background="@android:color/transparent"
+            android:paddingRight="0dip"
+            android:src="@drawable/ic_action_important" />
+
+        <ImageButton
+            android:id="@+id/Buttonpost"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:background="@android:color/transparent"
+            android:paddingRight="0dip"
+            android:src="@drawable/ic_action_mic" />
+
+        <ImageButton
+            android:id="@+id/profile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:paddingRight="0dip"
+            android:src="@drawable/ic_action_view_as_grid" 
+            />
+    </LinearLayout>
+</RelativeLayout>
+
+ 

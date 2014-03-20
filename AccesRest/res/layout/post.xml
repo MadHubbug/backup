@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:clickable="true"
+    android:orientation="vertical" >
+
+    <ImageButton
+        android:id="@+id/play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="36dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_action_play" />
+
+    <TextView
+        android:id="@+id/capt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/play"
+        android:text="Caption:"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/captet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/capt"
+        android:ems="10"
+        android:hint="Enter description here" />
+
+    <Button
+        android:id="@+id/sharefb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/sharetw"
+        android:background="@color/facebookblue"
+        android:paddingTop="0dp"
+        android:text="Share with Facebook"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:typeface="sans" />
+
+    <Button
+        android:id="@+id/sharetw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/captet"
+        android:layout_marginTop="25dp"
+        android:background="@color/twitterblue"
+        android:paddingTop="0dp"
+        android:text="Share with Twitter"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:typeface="sans" />
+
+</RelativeLayout>
