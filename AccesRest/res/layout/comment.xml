@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="horizontal"
+    android:paddingTop="2dp" >
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
+
+    <ImageView
+        android:id="@+id/commentpagedisplaypic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="3dp"
+        android:src="@drawable/dp" />
+
+    <ImageButton
+        android:id="@+id/commentpageplays"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/commentpagedisplaypic"
+        android:background="@android:color/transparent"
+        android:src="@drawable/play" />
+
+    <TextView
+        android:id="@+id/commentpagetimestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/commentpageusername"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="30dp"
+        android:paddingTop="5dp"
+        android:text="3m"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/grey" />
+
+    <SeekBar
+        android:id="@+id/commentpageseekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/commentpageplays"
+        android:layout_marginTop="10dp"
+        android:layout_toLeftOf="@+id/commentpageduration"
+        android:layout_toRightOf="@+id/commentpageplays"
+        android:clickable="false"
+        android:longClickable="false"
+        android:paddingBottom="0dp"
+        android:paddingTop="0dp"
+        android:thumb="@android:color/transparent" />
+
+    <TextView
+        android:id="@+id/commentpageduration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/commentpagetimestamp"
+        android:layout_alignTop="@+id/commentpageseekBar"
+        android:paddingTop="3dp"
+        android:text="00:30"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/commentpageusername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/commentpagedisplaypic"
+        android:layout_alignLeft="@+id/commentpageseekBar"
+        android:layout_marginBottom="11dp"
+        android:layout_marginLeft="11dp"
+        android:text="Madfresco"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/commentpagedescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/commentpageusername"
+        android:layout_alignRight="@+id/commentpageseekBar"
+        android:layout_below="@+id/commentpageplays"
+        android:minHeight="25dp"
+        android:text="hey there, do you like my app? Cool beans, I&apos;m just writing this down to see how long" />
+
+    <ImageButton
+        android:id="@+id/commentpagereply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/commentpageshare"
+        android:layout_marginRight="50dp"
+        android:layout_toLeftOf="@+id/commentpageshare"
+        android:background="@android:color/transparent"
+        android:src="@drawable/reply" />
+
+    <ImageButton
+        android:id="@+id/commentpagelike"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/commentpagereply"
+        android:layout_marginRight="75dp"
+        android:layout_toRightOf="@+id/commentpagelikecount"
+        android:background="@android:color/transparent"
+        android:src="@drawable/like" />
+
+    <TextView
+        android:id="@+id/commentpagelikecount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/commentpagelike"
+        android:layout_alignLeft="@+id/commentpageusername"
+        android:paddingBottom="2dp"
+        android:text="100"
+        android:textSize="15sp" />
+
+    <ListView
+        android:id="@+id/commentpagelistviews"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/commentpagereply" >
+
+    </ListView>
+
+    <TextView
+        android:id="@+id/commentpagereplycount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/commentpagereply"
+        android:layout_toLeftOf="@+id/commentpagereply"
+        android:layout_marginLeft="25dp"
+        android:text="100"
+        android:textSize="15sp" />
+
+    <ImageButton
+        android:id="@+id/commentpageshare"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/commentpagedescription"
+        android:layout_toLeftOf="@+id/commentpageduration"
+        android:background="@android:color/transparent"
+        android:layout_marginRight="30dp"
+        android:src="@drawable/share" />
+
+</RelativeLayout>

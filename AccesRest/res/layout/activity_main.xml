@@ -6,10 +6,11 @@
 
     <ListView
         android:id="@+id/listView1"
+        android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_width="fill_parent"   
         android:layout_above="@+id/footer"
-        >
+        android:background="@android:color/white"
+        android:divider="@drawable/list_divider" >
         
     </ListView>
 
@@ -19,36 +20,59 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:background="@color/grey"
+                android:background="#F86960"
         android:orientation="horizontal"
-        android:gravity="center" 
+        android:gravity="center"
+        android:paddingTop="2dp" 
         >
 
         <ImageButton
-            android:id="@+id/notif"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            
-            android:background="@android:color/transparent"
-            android:paddingRight="0dip"
-            android:src="@drawable/ic_action_important" />
-
-        <ImageButton
-            android:id="@+id/Buttonpost"
-            android:layout_width="wrap_content"
-            android:layout_height="45dp"
-            android:background="@android:color/transparent"
-            android:paddingRight="0dip"
-            android:src="@drawable/ic_action_mic" />
-
-        <ImageButton
-            android:id="@+id/profile"
-            android:layout_width="wrap_content"
+            android:id="@+id/homebutton"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:paddingRight="0dip"
-            android:src="@drawable/ic_action_view_as_grid" 
-            />
+            android:layout_weight="1"
+            android:src="@drawable/homebuttonclicked" />
+
+        <ImageButton
+            android:id="@+id/explorebutton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:paddingRight="0dip"
+            android:layout_weight="1"
+            android:src="@drawable/explorerunclicked" />
+
+        
+        <ImageButton
+            android:id="@+id/postbutton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:paddingRight="0dip"
+            android:layout_weight="1"
+            android:src="@drawable/record" />
+
+        <ImageButton
+            android:id="@+id/notificationbutton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:paddingRight="0dip"
+            android:layout_weight="1"
+            android:src="@drawable/notificationunclicked" />
+
+
+        <ImageButton
+            android:id="@+id/profilebutton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:paddingRight="0dip"
+            android:layout_weight="1"
+            android:src="@drawable/profilebuttonunclicked" />
+
     </LinearLayout>
 
 </RelativeLayout>

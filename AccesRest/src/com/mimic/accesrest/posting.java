@@ -19,13 +19,19 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -43,14 +49,16 @@ import com.stream.aws.Response;
 
 public class posting extends SherlockActivity implements OnClickListener{
 	private static final String LOG_TAG = "secondpost";
-	private MediaPlayer mPlayer = null;
-	private static String mFileName = null;
+	private MediaPlayer mPlayer = new MediaPlayer();
+	private static String mFileName;
 	public static AmazonClientManager clientManager = null;
 	public static String bucketname = "mimic";
 	private static URL newurl = null;
 	public static String gg = null;
 	private static EditText et = null;
 	private static String Title = null;
+	private ImageButton play;
+	private boolean mStartPlaying = true;
 	
     private void onPlay(boolean start){
 		if(start){
@@ -65,7 +73,9 @@ public class posting extends SherlockActivity implements OnClickListener{
     	try{
     		mPlayer.setDataSource(mFileName);
     		mPlayer.prepare();
-    	} catch (IOException e){
+ 
+    		
+    	}catch (IOException e){
     		Log.e(LOG_TAG, "prepare() failed");
     	}
     }
@@ -74,9 +84,20 @@ public class posting extends SherlockActivity implements OnClickListener{
 			
 			try{
 				Log.d(LOG_TAG, mFileName);
+				mPlayer.reset();
 				mPlayer.setDataSource(mFileName);
 				mPlayer.prepare();
 				mPlayer.start();
+		   		mPlayer.setOnCompletionListener(new OnCompletionListener(){
+
+					@Override
+					public void onCompletion(MediaPlayer arg0) {
+						mStartPlaying = !mStartPlaying;
+						play.setImageResource(R.drawable.playbutton);
+						mPlayer.reset();
+						
+					}
+	    		}); 
 				  } catch(IOException e){
 					  Log.e(LOG_TAG, "prepare() failed");
 					  
@@ -87,8 +108,7 @@ public class posting extends SherlockActivity implements OnClickListener{
 	
 
 	private void stopPlaying(){
-		mPlayer.release();
-		mPlayer = null;
+		mPlayer.stop();
 	}
 	
 	
@@ -98,15 +118,22 @@ public class posting extends SherlockActivity implements OnClickListener{
 		Log.e(LOG_TAG, "gettingintent");
 		setContentView(R.layout.post);
 		Bundle bundle = getIntent().getExtras();
-		Log.d(LOG_TAG, "getextras");
 		mFileName = bundle.getString("audiofile");
 		Log.d(LOG_TAG, mFileName);
-		
+		((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+		SpannableString s = new SpannableString("Post");
 		getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#F86960")));
-		getSupportActionBar().setTitle("Post");
-		getSupportActionBar().setDisplayShowHomeEnabled(false);
-		final ImageButton play =(ImageButton) findViewById(R.id.play);
-		et = (EditText) findViewById(R.id.captet);
+		s.setSpan(new Typefacespan(this, "Roboto-Medium.ttf"), 0, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		getSupportActionBar().setTitle(s);
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
+		getSupportActionBar().setHomeButtonEnabled(true);
+		getSupportActionBar().setIcon(R.drawable.back);
+		ImageView view = (ImageView) findViewById(android.R.id.home);
+		
+		
+	
+		play =(ImageButton) findViewById(R.id.play);
+		et = (EditText) findViewById(R.id.description);
 		
 		clientManager = new AmazonClientManager(getSharedPreferences(
 				"com.mimic.accessrest", Context.MODE_PRIVATE));
@@ -116,17 +143,18 @@ public class posting extends SherlockActivity implements OnClickListener{
 			Log.d(LOG_TAG, "no credentials");
 		}
 		play.setOnClickListener(new OnClickListener(){
-			boolean mStartPlaying = true;
+			 boolean x = mStartPlaying;
 			
 			@Override
 			public void onClick(View v) {
-				onPlay(mStartPlaying);
-				if (mStartPlaying){
-					play.setImageResource(R.drawable.ic_action_stop);
+				onPlay(x);
+				if (x){
+					play.setImageResource(R.drawable.biggerstop);
 				} else{
-					play.setImageResource(R.drawable.ic_action_play);
+					play.setImageResource(R.drawable.biggerplay);
 				}
 				mStartPlaying = !mStartPlaying;
+				
 			}
 				
 			
@@ -148,13 +176,16 @@ public class posting extends SherlockActivity implements OnClickListener{
 	      case R.id.contin:
 	    	  Title = et.getText().toString();
 	    	  new ValidateCredentialsTask().execute();
-	    	  Intent i = new Intent(posting.this,MainActivity.class);
-	      		startActivity(i);
-	      		finish();
-	      		default:
-	         return super.onOptionsItemSelected(item);
-	   }
-	}
+	    	  ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(et.getWindowToken(), 0);
+	      	
+	        case android.R.id.home:
+	            Log.d("did you", "click?");
+	        	this.finish();
+	            return true;
+	    	default:
+		         return super.onOptionsItemSelected(item);
+	        
+	    }}
 	
 	@Override
 	public void onClick(View v) {
@@ -176,7 +207,7 @@ public class posting extends SherlockActivity implements OnClickListener{
 			Createbucket bucket = new Createbucket();
 			bucket.execute(response);
 			Log.d(LOG_TAG, "onpostexecute");
-
+			
 
 		}
 
@@ -202,7 +233,7 @@ public class posting extends SherlockActivity implements OnClickListener{
 				try{
 					final ObjectMetadata metx = new ObjectMetadata();
 					metx.addUserMetadata("Content-Type", "audio/x-wav");
-					PutObjectRequest por = new PutObjectRequest("tesst", "post2.wav", filex);
+					PutObjectRequest por = new PutObjectRequest("tesst", "testing.wav", filex);
 					por.withMetadata(metx);
 					por.withCannedAcl(CannedAccessControlList.PublicRead);
 					Upload upload = manager.upload(por);
@@ -213,7 +244,7 @@ public class posting extends SherlockActivity implements OnClickListener{
 					} 
 
 					Log.d(LOG_TAG, upload.getDescription());
-					newurl = s3Client.getUrl("tesst", "post.wav");
+					newurl = s3Client.getUrl("tesst", "testing.wav");
 				
 					Log.d(LOG_TAG, "creating object");
 				
@@ -238,8 +269,11 @@ public class posting extends SherlockActivity implements OnClickListener{
 			try{
 				apacheHttpClientPost post = new apacheHttpClientPost();
 				Log.d(LOG_TAG, "Thisis");
-				post.execute("http://192.168.1.131:8000/api/v1/Post/");
+				post.execute("http://mimictheapp.herokuapp.com/posts/");
 				Log.d(LOG_TAG, "Executing gg");
+		    	Intent i = new Intent(posting.this,MainActivity.class);
+		      	startActivity(i);
+		      	finish();
 
 
 			}catch (Exception exception){
@@ -291,14 +325,18 @@ public class posting extends SherlockActivity implements OnClickListener{
 		@Override
 		protected Void doInBackground(String... params) {
 			// TODO Auto-generated method stub
-
+			String user = Integer.toString(3);
+			String x = Integer.toString(0);
+			String s = "2014-04-30T17:41:42.470Z";
 			try {
 				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
-
-				nameValuePairs.add(new BasicNameValuePair("\"Createdthispost\"", "\"/api/v1/User/1/\""));
-				nameValuePairs.add(new BasicNameValuePair("\"Userwhodidit\"", "\"/api/v1/User/1/\""));
-				nameValuePairs.add(new BasicNameValuePair("\"postlink\"", "\""+newurl.toString()+"\"")); 
-				nameValuePairs.add(new BasicNameValuePair("\"title\"", "\""+Title+"\""));
+				
+				nameValuePairs.add(new BasicNameValuePair("\"user\"", user));
+				nameValuePairs.add(new BasicNameValuePair("\"posturls\"", "\""+newurl.toString()+"\""));
+				nameValuePairs.add(new BasicNameValuePair("\"likes\"", x)); 
+				nameValuePairs.add(new BasicNameValuePair("\"commentcounter\"", x));
+				nameValuePairs.add(new BasicNameValuePair("\"created\"", "\""+s+"\""));
+				nameValuePairs.add(new BasicNameValuePair("\"description\"", "\""+Title+"\""));
 				
 				DefaultHttpClient httpClient = new DefaultHttpClient();
 				Log.d(LOG_TAG, "httpclient");        
@@ -306,7 +344,8 @@ public class posting extends SherlockActivity implements OnClickListener{
 				StringEntity entity = new StringEntity(getQueryJSON(nameValuePairs));
 				Log.d(LOG_TAG,getQueryJSON(nameValuePairs));
 				postRequest.setHeader("Content-type","application/json");
-				postRequest.setEntity(entity);
+				postRequest.setEntity(entity);	
+				postRequest.addHeader("Authorization", "Basic " + Base64.encodeToString(("madfresco"+":"+"genesis09").getBytes(), Base64.NO_WRAP));
 				Log.d(LOG_TAG, "noresponse");  
 				httpClient.execute(postRequest);
 				Log.d(LOG_TAG, "noresponse");  

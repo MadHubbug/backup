@@ -3,38 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-
-     <LinearLayout
-        android:id="@+id/profheader"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:background="@color/white"
-        android:orientation="vertical"
-        android:gravity="center" 
-        >
-        
-         <ImageView
-             android:id="@+id/profilepic"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:src="@drawable/dp" />
-
-         <TextView
-             android:id="@+id/FullNameprof"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:text="John De Guzman" />
-
-         <TextView
-             android:id="@+id/UserNameprof"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:text="Madfresco"
-             android:textAppearance="?android:attr/textAppearanceSmall" />
-         
-</LinearLayout>
          
          <LinearLayout
              android:id="@+id/follows"
@@ -43,25 +11,50 @@
              android:gravity="center"
              android:orientation="horizontal"
             android:layout_below="@+id/profheader"
-             
-             android:background="@drawable/border">
+             >
 
+                
              <LinearLayout
-                 android:layout_width="match_parent"
-                 android:layout_height="wrap_content"
-                 android:layout_marginBottom="10dp"
-                 android:layout_marginTop="10dp"
-                 android:layout_weight="1"
-                 
-                 android:clickable="true"
-                 android:gravity="center"
-                 android:orientation="vertical" >
+             android:layout_width="match_parent"
+             android:layout_height="match_parent" 
+             android:gravity="center"
+             android:orientation="vertical"
+             android:clickable="true"
+             android:layout_weight="1"
+             android:background="@drawable/border"
+             android:paddingTop="10dp"
+             android:paddingBottom="10dp">
 
+                 <TextView
+                     android:id="@+id/postcounts"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:background="@android:color/transparent"
+                     android:text="0"
+                     android:textSize="14sp" 
+                     />
+
+                 <TextView
+                     android:id="@+id/postlabel"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:text="Mimic"
+                     android:textSize="14sp" />
+             </LinearLayout>
+             
+  		<LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="match_parent" 
+             android:gravity="center"
+             android:orientation="vertical"
+             android:clickable="true"
+             android:layout_weight="1"
+             android:background="@drawable/border">
                  <TextView
                      android:id="@+id/followertext"
                      android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
-                     android:background="@android:color/transparent"
+                    
                      android:text="0"
                      android:textSize="14sp" />
 
@@ -75,11 +68,12 @@
 
          <LinearLayout
              android:layout_width="match_parent"
-             android:layout_height="wrap_content" 
+             android:layout_height="match_parent" 
              android:gravity="center"
              android:orientation="vertical"
              android:clickable="true"
-             android:layout_weight="1">
+             android:layout_weight="1"
+             android:background="@drawable/border">
              
              <TextView
                  android:id="@+id/followingtext"
@@ -111,42 +105,129 @@
     </ListView>
 
     <LinearLayout
-        android:id="@+id/footer"
+        android:id="@+id/footerprofpage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:background="@color/grey"
+                android:background="#F86960"
+            android:padding="2dp" 
         android:orientation="horizontal"
         android:gravity="center" 
         >
 
         <ImageButton
-            android:id="@+id/notif"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            
-            android:background="@android:color/transparent"
-            android:paddingRight="0dip"
-            android:src="@drawable/ic_action_important" />
-
-        <ImageButton
-            android:id="@+id/Buttonpost"
-            android:layout_width="wrap_content"
-            android:layout_height="45dp"
-            android:background="@android:color/transparent"
-            android:paddingRight="0dip"
-            android:src="@drawable/ic_action_mic" />
-
-        <ImageButton
-            android:id="@+id/profile"
-            android:layout_width="wrap_content"
+            android:id="@+id/homebuttonprofpage"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:paddingRight="0dip"
-            android:src="@drawable/ic_action_view_as_grid" 
-            />
+            android:layout_weight="1"
+            android:src="@drawable/homeunclicked" />
+
+        <ImageButton
+            android:id="@+id/explorebuttonprofpage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:paddingRight="0dip"
+            android:layout_weight="1"
+            android:src="@drawable/explorerunclicked" />
+
+        
+        <ImageButton
+            android:id="@+id/postbuttonprofpage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:paddingRight="0dip"
+            android:layout_weight="1"
+            android:src="@drawable/record" />
+
+        <ImageButton
+            android:id="@+id/notificationbuttonprofpage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:paddingRight="0dip"
+            android:layout_weight="1"
+            android:src="@drawable/notificationunclicked" />
+
+
+        <ImageButton
+            android:id="@+id/profilebuttonprofpage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:paddingRight="0dip"
+            android:layout_weight="1"
+            android:src="@drawable/profileclicked" />
+
     </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/profheader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/white" 
+        android:paddingBottom="15dp">
+
+        <ImageView
+            android:id="@+id/profilepic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/dp" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/postclickable"
+            android:layout_below="@+id/profilepic"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="20dp"
+            android:background="#000000"
+            android:padding="1dp" >
+
+            <ImageButton
+                android:id="@+id/close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:src="@drawable/editprof" 
+                
+                />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/profilepic"
+            android:layout_below="@+id/profilepic"
+            android:text="mafresco"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/postclickable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/profilepic"
+            android:layout_toRightOf="@+id/profilepic"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla risus nunc, scelerisque eget nibh ut, tincidunt fermentum mauris. "
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="12dp" />
+
+    </RelativeLayout>
+
 </RelativeLayout>
 
  

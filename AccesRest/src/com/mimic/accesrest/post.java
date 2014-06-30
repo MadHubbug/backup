@@ -5,21 +5,27 @@ import java.io.IOException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
@@ -35,11 +41,13 @@ public class post extends SherlockActivity {
 	
 	
 	private ExtAudioRecorder mRecorder = null;
+	private boolean plays;
 	
-	
-	private MediaPlayer mPlayer = null;
-	TextView tv;
+	private MediaPlayer mPlayer = new MediaPlayer();
+	private TextView tv;
+	private ImageButton record, delete, play;
 	private static final String Logs = "postui";
+	private RelativeLayout rel;
 	
 	private void onRecord (boolean start){
 		if (start){
@@ -57,19 +65,29 @@ public class post extends SherlockActivity {
 	}
 	
 	private void startPlaying(){
-		mPlayer = new MediaPlayer();
+		
 		try{
+			mPlayer.reset();
 			mPlayer.setDataSource(mFileName);
 			mPlayer.prepare();
 			mPlayer.start();
+			mPlayer.setOnCompletionListener(new OnCompletionListener(){
+
+				@Override
+				public void onCompletion(MediaPlayer arg0) {
+					play.setImageResource(R.drawable.biggerplay);
+					mPlayer.reset();
+					plays=true;
+				}
+				
+			});
 		} catch (IOException e){
 			Log.e(LOG_TAG, "prepare() failed");
 		}
 	}
 	
 	private void stopPlaying(){
-		mPlayer.release();
-		mPlayer = null;
+		mPlayer.stop();		
 	}
 	
 	private void startRecording(){
@@ -103,9 +121,24 @@ public class post extends SherlockActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.recording);
-		tv = (TextView) findViewById(R.id.countdown);
-		Button next = (Button) findViewById(R.id.next);
-		
+	   	tv = (TextView) findViewById(R.id.countdown);
+	   	tv.setVisibility(View.GONE);
+	   	final ImageButton next = (ImageButton) findViewById(R.id.nextbutton);
+		play = (ImageButton) findViewById(R.id.playpost);
+		play.setVisibility(View.GONE);
+		play.setOnClickListener(new OnClickListener() {
+			boolean plays = true;
+			
+			@Override
+			public void onClick(View v) {
+				onPlay(plays);
+				if (plays){
+				play.setImageResource(R.drawable.biggerstop);
+				}else {
+					play.setImageResource(R.drawable.biggerplay);
+				} plays = !plays;
+			}
+		});
 		next.setOnClickListener(new OnClickListener(){
 
 			@Override
@@ -120,10 +153,24 @@ public class post extends SherlockActivity {
 			}
 			
 		});
-		final MyCounter timer = new MyCounter(20000, 1000);
+		final MyCounter timer = new MyCounter(30000, 1000);
+		getWindow().setDimAmount((float) 0.80);
 		getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 		getWindow().setGravity(Gravity.BOTTOM);
-		final ImageButton record = (ImageButton) findViewById(R.id.view1);
+		delete = (ImageButton) findViewById(R.id.delete);
+		delete.setVisibility(View.GONE);
+		delete.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View arg0) {
+				play.setVisibility(View.GONE);
+				record.setImageResource(R.drawable.recwhite);
+				record.setVisibility(View.VISIBLE);
+				
+			}
+			
+		});
+		record = (ImageButton) findViewById(R.id.record);
 		record.setOnClickListener(new OnClickListener(){
 			boolean mStartRecording = true;
 			
@@ -131,11 +178,19 @@ public class post extends SherlockActivity {
 			public void onClick(View v) {
 				onRecord(mStartRecording);
 				if (mStartRecording){
-					timer.start();
-					record.setImageResource(R.drawable.bordsh);
+				timer.start();
+					record.setImageResource(R.drawable.recred);
+					tv.setVisibility(View.VISIBLE);
+					delete.setVisibility(View.GONE);
 				} else{
 					timer.cancel();
-					record.setImageResource(R.drawable.shape);
+					record.setImageResource(R.drawable.recwhite);
+					tv.setVisibility(View.GONE);
+					delete.setVisibility(View.VISIBLE);
+					record.setVisibility(View.GONE);
+
+					play.setVisibility(View.VISIBLE);
+					
 				}
 				mStartRecording = !mStartRecording;
 			}
@@ -144,20 +199,13 @@ public class post extends SherlockActivity {
 			
 		});
 		
-		final ImageButton play =(ImageButton) findViewById(R.id.playbutt);
-		play.setOnClickListener(new OnClickListener(){
-			boolean mStartPlaying = true;
-			
+		ImageButton close =(ImageButton) findViewById(R.id.close);
+		close.setOnClickListener(new OnClickListener(){
+
 			@Override
 			public void onClick(View v) {
-				onPlay(mStartPlaying);
-				if (mStartPlaying){
-					play.setImageResource(R.drawable.ic_action_stop);
-				} else{
-					play.setImageResource(R.drawable.ic_action_play);
+				finish();
 				}
-				mStartPlaying = !mStartPlaying;
-			}
 				
 			
 			
@@ -174,7 +222,7 @@ public class post extends SherlockActivity {
 
 		    @Override
 		    public void onTick(long millisUntilFinished  ) {
-		        tv.setText(("0:" +  millisUntilFinished/1000));
+		        tv.setText((millisUntilFinished/1000+"s"));
 		        
 		    }
 
@@ -183,12 +231,26 @@ public class post extends SherlockActivity {
 			@Override
 			public void onFinish() {
 				
-				Log.d(LOG_TAG, "Timer Completed.");
+				record.setImageResource(R.drawable.recwhite);
+				tv.setVisibility(View.GONE);
+				delete.setVisibility(View.VISIBLE);
+				onRecord(false);
+				
 			}
 		
 	}
 		
-	
+		@Override
+		protected void onDestroy()
+		{
+			if (mPlayer != null){
+			mPlayer.release();
+			}
+			if (mRecorder != null){
+			mRecorder.release();
+			}
+			super.onDestroy();
+		}
 	
 }
 	

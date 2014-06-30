@@ -53,12 +53,12 @@ private UiLifecycleHelper uiHelper;
 };
 
 private void onSessionStateChange(Session session, SessionState state,
-		Exception exception) {
-//	  if (state.isOpened()) {
-//          
-//          Intent intent = new Intent(this, signup.class);
-//          this.startActivity(intent);
-//      } 
+	Exception exception) {
+if (state.isOpened()) {
+         
+     Intent intent = new Intent(this, signup.class);
+  this.startActivity(intent);
+} 
 	
 }
 
@@ -82,7 +82,7 @@ private void onSessionStateChange(Session session, SessionState state,
 		        }
 		        Session.setActiveSession(session);
 		    }
-//	    updateView();
+	   updateView();
 
 
 	}
@@ -96,7 +96,7 @@ private void onSessionStateChange(Session session, SessionState state,
 	private void updateView() {
 		Session session = Session.getActiveSession();
         if (session.isOpened()) {
-        	 Intent i = new Intent(MainPage.this,signup.class);
+        	 Intent i = new Intent(MainPage.this,MainActivity.class);
         	 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);   
         	 startActivity(i);
         	 finish();

@@ -36,7 +36,7 @@ public class MimicWebTask extends AsyncTask<Void, Integer, String>{
 		
 		try{
 			Log.d(debugtag, "Background");
-			String result = Mimicdatahelper.downloadFromServer();
+			String result = Mimicdatahelper.downloadFromServer("http://mimictheapp.herokuapp.com/posts/?format=json");
 			return result;
 		}
 		catch (Exception e)
@@ -59,20 +59,27 @@ public class MimicWebTask extends AsyncTask<Void, Integer, String>{
 		}
 		
 		try{
-			JSONObject respobj = new JSONObject(result);
-			JSONArray users = respobj.getJSONArray("objects");
-			for (int i=0; i<users.length(); i++){
-				JSONObject post= users.getJSONObject(i);
-				JSONObject user = post.getJSONObject("Userwhodidit");
-				String username = user.getString("Username");
-				String title = post.getString("title");
-				int share = post.getInt("share");
-				int comment = post.getInt("likecounter");
-				int likes = post.getInt("commentcounter");
+			JSONArray array= new JSONArray(result);
+			for (int i=0; i<array.length(); i++){
+				JSONObject post= array.getJSONObject(i);
+				JSONObject user = post.getJSONObject("user");
+				String username = user.getString("username");
+				String dpurl = user.getString("profilepictureurl");
+				String profileurl = user.getString("url");
+				String url= post.getString("url");
+				String posturl = post.getString("posturls");
+				String description = post.getString("description");
+				if (description == "null"){
+					description = " ";
+				}
+				int comments = post.getInt("commentscount");
+				int likes= post.getInt("likescount");
+				int postid = post.getInt("id");
+				Boolean likesbool = post.getBoolean("favourites");
+				String timestamp = post.getString("time");
 				
 				
-				
-				mimicdata.add(new MimicData(username, title, likes, comment, share));
+				mimicdata.add(new MimicData(username, dpurl, url, postid, likes, comments, posturl, description, likesbool, timestamp, profileurl));
 				
 			}
 			

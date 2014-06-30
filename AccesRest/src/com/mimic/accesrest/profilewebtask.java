@@ -13,12 +13,14 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class profilewebtask extends AsyncTask<Void, Integer, String>{
+public class profilewebtask extends AsyncTask<String, Integer, String>{
 
 	private ProgressDialog progdialog;
 	private Context context;
 	private profile activity;
 	private static final String debugtag = "profileBackgroundtask";
+	private JSONArray respobj;
+	private JSONObject post;
 	
 	public profilewebtask (profile activity){
 		super();
@@ -34,11 +36,11 @@ public class profilewebtask extends AsyncTask<Void, Integer, String>{
 	}
 	
 	@Override
-	protected String doInBackground(Void... arg0) {
-		
+	protected String doInBackground(String... x) {
+		String query = x[0];
 		try{
 			Log.d(debugtag, "profileBackground");
-			String result = profiledatahelper.downloadFromServer();
+			String result = Mimicdatahelper.downloadFromServer(query);
 			return result;
 		}
 		catch (Exception e)
@@ -62,25 +64,35 @@ public class profilewebtask extends AsyncTask<Void, Integer, String>{
 		}
 		
 		try{
-			JSONObject respobj = new JSONObject(result);
-			JSONArray posts = respobj.getJSONArray("Posts");
-			for (int i=0; i<posts.length(); i++){
-				JSONObject post= posts.getJSONObject(i);
-				String title = post.getString("title");
-				int share = post.getInt("share");
-				int comment = post.getInt("likecounter");
-				int likes = post.getInt("commentcounter");
-				String username = respobj.getString("Username");
-				mimicdata.add(new MimicData(username, title, likes, comment, share));
+			post = JsonObjectCheck(result);
+			JSONArray posts = post.getJSONArray("posts");
+				for (int x=0; x<posts.length(); x++){
+				JSONObject l = posts.getJSONObject(x);
+				int comments = l.getInt("commentscount");
+				int likes = l.getInt("likescount");
+				String username = null;
+				String dpurl = null;
+				String url = l.getString("url");
+				String posturl = l.getString("posturls");
+				String description = "This is so coooooooool. Can you please use my app?! JUST ONCE. GOD";
+				Boolean bool = false;
+				int postid = l.getInt("id");
+				String timestamp = l.getString("time");
+				mimicdata.add(new MimicData(username, dpurl, url, postid, likes, comments, posturl, description, bool, timestamp, null));
 			}
-				String Username = respobj.getString("Username");
-				int followers = respobj.getInt("followers");
-				int followings = respobj.getInt("following");
-				String fullname = respobj.getString("fullname");
+				Log.d("What is post","post is: "+post);
+				String Username = post.getString("username");
+				Log.d("What is post","post is: "+Username);
+				int followers = post.getInt("followingcount");
+				int followings = post.getInt("followerscount");
+				int postcount = post.getInt("postcount");
+				String fullname = null;
+				String profileurl = post.getString("profilepictureurl");
 				
 				
 				
-				profiledata.add(new profiledata(fullname, Username, followings, followers));
+				
+				profiledata.add(new profiledata(fullname, Username, followings, followers, profileurl, postcount));
 				
 			
 			
@@ -92,8 +104,23 @@ public class profilewebtask extends AsyncTask<Void, Integer, String>{
 		this.activity.setUser(mimicdata);
 		this.activity.setUsers(profiledata);
 		}
+
 		
+	public JSONObject JsonObjectCheck(String result) throws JSONException{
+		try{
+			JSONArray x = new JSONArray(result);
+			JSONObject w = x.getJSONObject(0);
+			
+			return w;
+		}catch (Exception e){
+			JSONObject r = new JSONObject(result);
+			return r;
+			
+		}
 		
+	}
+	
+	
 	}
 	
 

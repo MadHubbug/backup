@@ -1,83 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    android:orientation="horizontal" >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#3D454E"
+            android:paddingTop="1dp" >
 
-    <LinearLayout
-        android:id="@+id/linearLayout1"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="horizontal" >
+
+     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/grey"
-        android:gravity="left"
-        android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/textView1"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:id="@+id/lay" >
+        <ImageButton
+            android:id="@+id/close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="20dp"
-            android:text="Post"
-            android:textColor="@android:color/white"
-            android:textSize="25sp"
-            android:typeface="sans" />
-    </LinearLayout>
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="15dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/close" />
 
-    <TextView
-        android:id="@+id/countdown"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/seekbar"
-        android:layout_marginRight="20dp"
-        android:text="0:20" />
-
-    <Button
-        android:id="@+id/next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/view1"
-        android:layout_marginTop="14dp"
-        android:background="@color/grey"
-        android:paddingTop="0dp"
-        android:text="Continue"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:typeface="sans" />
-
-    <SeekBar
-        android:id="@+id/seekbar"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/linearLayout1"
-        android:layout_marginTop="25dp"
-        android:layout_toLeftOf="@+id/countdown"
-        android:clickable="false"
-        android:thumb="@android:color/transparent" />
-
-    <ImageButton
-        android:id="@+id/playbutt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/next"
-        android:layout_alignRight="@+id/seekbar"
-        android:layout_alignTop="@+id/view1"
-        android:layout_marginLeft="28dp"
-        android:layout_toRightOf="@+id/view1"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_action_play" />
-
-    <ImageButton
-        android:id="@+id/view1"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/countdown"
-        android:layout_marginLeft="88dp"
-        android:background="@drawable/shape" />
-
+        <ImageButton
+            android:id="@+id/record"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/close"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/recwhite" />
+         <ImageButton
+            android:id="@+id/playpost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/record"
+            android:layout_alignLeft="@+id/record"
+            android:layout_marginTop="72dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/biggerplay" 
+            android:layout_centerHorizontal="true"/>
+         
+                 <TextView
+            android:id="@+id/countdown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/record"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="32dp"
+            android:text="30s"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/white" />
+         
+                 
 </RelativeLayout>
+        <ImageButton
+            android:id="@+id/nextbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lay"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop ="20dp"
+            android:background="@android:color/transparent"
+            android:paddingBottom="10dp"
+            android:src="@drawable/next" />
+
+
+        <ImageButton
+            android:id="@+id/delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignTop="@+id/nextbutton"
+            android:layout_marginLeft="33dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/delete" />
+
+
+
+    </RelativeLayout>
+
+</LinearLayout>

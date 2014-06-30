@@ -12,12 +12,13 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import android.content.Context;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
 public class Mimicdatahelper {
 
-	private static final String MimicDataUserURL="http://192.168.1.131:8000/api/v1/Post/?format=json&order_by=-created_at";
+	private static String MimicDataUserURL;
 	private static final int HTTP_STATUS_OK = 200;
 	private static byte[] buff = new byte[1024];
 	private static final String logtag = "mimicdatahelper";
@@ -32,19 +33,20 @@ public class Mimicdatahelper {
 
 		public ApiException (String msg, Throwable thr)
 		{
-			super (msg, thr);
+		 super (msg, thr);
 		}
 	}
 	
-	protected static synchronized String downloadFromServer()throws ApiException{
+	protected static synchronized String downloadFromServer(String url)throws ApiException{
 		
 		String retval = null;
 		
 		Log.d(logtag, "Fetching ");
 		
+		MimicDataUserURL = url;
 		HttpClient client = new DefaultHttpClient();
-		HttpGet request = new HttpGet(MimicDataUserURL);
-		Log.d(logtag,"statusline");
+		HttpGet request = new HttpGet(MimicDataUserURL);               
+		request.addHeader("Authorization", "Basic " + Base64.encodeToString(("madfresco"+":"+"genesis09").getBytes(), Base64.NO_WRAP));
 		
 		try{
 			
@@ -69,6 +71,7 @@ public class Mimicdatahelper {
 			}
 			
 			retval = new String(content.toByteArray());
+			Log.d(logtag, "return value" + retval);
 			
 	}
 		catch (Exception e){

@@ -2,29 +2,59 @@ package com.mimic.accesrest;
 
 public class MimicData {
 
-	private String username;
-	private String title;
-	private Integer commentcounter;
-	private Integer likeCounter;
-	private Integer sharecount;
+	private String username, profilepictureurl, posturl, url, description, timestamp, profileurl;
+	private Integer commentcounter, likeCounter, postid;
+	private Boolean likes;
 	
-	public MimicData(String Username, String Title, Integer likecounter, Integer commentcount, Integer shareC){
+	
+	
+	public MimicData(String Username, String dpurl, String Url,  int postid, Integer likecounter, Integer commentcount, String posturl, String description, Boolean likes, String timestamp, String profileurl){
 		
 		this.username = Username;
-		this.title = Title;
+		this.profilepictureurl = dpurl;
 		this.likeCounter = likecounter;
+		this.url = Url;
 		this.commentcounter = commentcount;
-		this.sharecount = shareC;
-				
+		this.description = description;
+		this.posturl = posturl;
+		this.likes = likes;
+		this.postid = postid;
+		this.timestamp= timestamp;
+		this.profileurl=profileurl;		
 	}
 	
-	
-	public String gettitle(){
-		return title;
+	public String getprofileurl(){
+		return profileurl;
+	}
+	public String gettime(){
+		return timestamp;
 	}
 	
-	public void setEmail(String Title){
-		this.title = Title;
+	public void settime(String timestamp){
+		this.timestamp= timestamp;
+	}
+	
+	public int getpostid(){
+		return postid;
+	}
+	
+	public void setpostid(int postid){
+		this.postid = postid;
+	}
+	public Boolean getLikes(){
+		return likes;
+	}
+	
+	public void setLikes(Boolean Likes){
+		this.likes = Likes;
+	}
+	
+	public String geturl(){
+		return profilepictureurl;
+	}
+	
+	public void setUrl(String url){
+		this.profilepictureurl = url;
 	}
 	
 	public String getUsername(){
@@ -54,16 +84,21 @@ public class MimicData {
 	}
 	
 	public String getsharecount(){
-		String x = sharecount.toString();
+		String x = description.toString();
 		return x;
 	}
 	
-	public void setsharecount(Integer sharecount){
-		this.sharecount = sharecount;
+	public void setsharecount(String description){
+		this.description = description;
+	}
+
+	public String getposturl(){
+		return posturl;
 	}
 	
-	
-	
+	public void setposturl(String Title){
+		this.posturl = Title;
+	}
 	
 	
 }

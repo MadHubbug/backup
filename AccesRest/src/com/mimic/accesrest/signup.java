@@ -9,14 +9,22 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.StatusLine;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -61,7 +69,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.preference.PreferenceManager;
 
-public class signup extends SherlockFragmentActivity  implements OnClickListener{
+public class signup extends SherlockFragmentActivity	{
 
 private final String logtag ="Signuptag";
 //private Session.StatusCallback statusCallback = new SessionStatusCallback();
@@ -98,8 +106,8 @@ private static byte[] buff = new byte[1024];
 		name.setText(namebun);
 		username.setText(bundle.getString("username"));
 		fbid = bundle.getInt("fbid");
-		lastname = bundle.getString("last_name");
-		firstname = bundle.getString("first_name");
+		lastname = bundle.getString("lastname");
+		firstname = bundle.getString("firstname");
 		getuserPic x = new getuserPic();
 		x.execute();
 		
@@ -125,15 +133,21 @@ private static byte[] buff = new byte[1024];
 				passwordbun = password.getText().toString();
 				
 				new ValidateCredentialsTask().execute();
-				
+				Log.d(LOG_TAG, "WHAT THE F");
 				editor.putString("fullname", name.getText().toString()); 
-				editor.putString("username", username.getText().toString());
+				//editor.putString("username", username.getText().toString());
 				editor.putString("email", email.getText().toString());
 				editor.putInt("fbid", fbid);
 				editor.putString("lastname", lastname);
 				editor.putString("firstname", firstname);
 				editor.putString("dpurl", "http://graph.facebook.com/"+fbid+"/picture?type=large");
 				editor.commit();
+				
+				Log.d("SHAREDPREFERENCES", prefs.getString("fullname", "there's nothing here"));
+				
+				Intent i = new Intent(signup.this, MainActivity.class);
+				startActivity(i);
+				finish();
 				
 			}
 		});
@@ -155,7 +169,6 @@ private static byte[] buff = new byte[1024];
 //	            if (session.getState().equals(SessionState.CREATED_TOKEN_LOADED)) {
 //	                session.openForRead(new Session.OpenRequest(this).setCallback(statusCallback));
 //	            }
-//	        }
 //        updateView();
 	}
 	private class ValidateCredentialsTask extends
@@ -230,16 +243,36 @@ private static byte[] buff = new byte[1024];
 		    Log.d(LOG_TAG, "Loading Picture");
 		    imageURL = "http://graph.facebook.com/"+fbid+"/picture?type=large";
 		    try {
-		        bitmap = BitmapFactory.decodeStream((InputStream)new URL(imageURL).getContent());
-		    } catch (Exception e) {
-		        Log.d("TAG", "Loading Picture FAILED");
-		        e.printStackTrace();
-		    }
-			return bitmap;
+		    	URL url = new URL(imageURL);
+		        HttpGet httpRequest = null;
+
+		        httpRequest = new HttpGet(url.toURI());
+
+		        HttpClient httpclient = new DefaultHttpClient();
+		        HttpResponse response = (HttpResponse) httpclient.execute(httpRequest);
+
+		        HttpEntity entity = response.getEntity();
+		        BufferedHttpEntity b_entity = new BufferedHttpEntity(entity);
+		        InputStream input = b_entity.getContent();
+
+		        bitmap = BitmapFactory.decodeStream(input);
+
+		          } catch (MalformedURLException e) {
+		        Log.e("log", "bad url");
+		    } catch (IOException e) {
+		        Log.e("log", "io error");
+		    } catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		    Log.d(LOG_TAG, "DONE");
+		    return bitmap;
+			
 
 		}
 		@Override
 		protected void onPostExecute(Bitmap bitmap) {
+			Log.d(LOG_TAG,"IT'S HERE");
 			Bitmap circleBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
 
 			BitmapShader shader = new BitmapShader (bitmap,  TileMode.CLAMP, TileMode.CLAMP);
@@ -257,12 +290,6 @@ private static byte[] buff = new byte[1024];
 	}
 
 	
-	
-	@Override
-	public void onClick(View v) {
-
-		
-	}
 	
 
 	
@@ -318,7 +345,7 @@ private static byte[] buff = new byte[1024];
 			try{
 				apacheHttpClientPost post = new apacheHttpClientPost();
 				Log.d(LOG_TAG, "Thisis");
-				post.execute("http://192.168.1.131:8006/api/v1/create_user/?format=json");
+				post.execute("http://192.168.1.131:8000/api/v1/create_user/?format=json");
 				Log.d(LOG_TAG, "Executing gg");
 
 
@@ -400,10 +427,53 @@ private static byte[] buff = new byte[1024];
 		
 				Log.d(LOG_TAG, "noresponse");  
 				httpClient.execute(postRequest);
-				
-				
-
+				UsernamePasswordCredentials ups = new UsernamePasswordCredentials(usernamebun, passwordbun);
+				HttpGet GetRequest = new HttpGet("http://192.168.1.131:8000/api/v1/user/?format=json");
 				httpClient.getConnectionManager().shutdown();
+				AuthScope authScope = new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT);
+	             
+				try{
+					DefaultHttpClient newclient = new DefaultHttpClient();
+					newclient.getCredentialsProvider().setCredentials(authScope, 
+                            ups);
+					GetRequest.setHeader("Content-type","application/json");
+					HttpResponse response = newclient.execute(GetRequest);
+					
+					Log.d(logtag,"try");
+					
+					
+					HttpEntity ent = response.getEntity();
+					
+					InputStream ist = ent.getContent();
+					ByteArrayOutputStream content = new ByteArrayOutputStream();
+					Log.d(logtag, "byte array output stream");
+
+					int readCount = 0;
+					Log.d(logtag, "while loop");
+					while ((readCount = ist.read(buff)) != -1) {
+						content.write(buff, 0, readCount);
+					}
+					
+					retval = new String(content.toByteArray());
+					httpClient.getConnectionManager().shutdown();
+				} catch (Exception e){
+					
+				} try{
+					JSONObject respobj = new JSONObject(retval);
+					JSONArray users = respobj.getJSONArray("objects");
+					JSONObject user = users.getJSONObject(0);
+					String apikey = user.getString("key");
+					Log.d("SHAREDPREFERENCEKEY1", apikey);
+					
+					editor.putString("dbkey", apikey);
+					editor.commit();
+					Log.d("SHAREDPREFERENCEKEY2", prefs.getString("dbkey", "Nothings here"));
+				}catch (Exception e){
+					
+				}
+				
+			
+				
 
 			} catch (MalformedURLException e) {
 

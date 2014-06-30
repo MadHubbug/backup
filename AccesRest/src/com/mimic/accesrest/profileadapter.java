@@ -1,23 +1,48 @@
 package com.mimic.accesrest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import com.mimic.accesrest.MainActivity.MyViewHolder;
 
+
 import android.app.Activity;
+import android.content.Intent;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnPreparedListener;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 public class profileadapter extends BaseAdapter implements OnClickListener{
 
 	private static final String debugtag = "MimicAdapter";
 	private Activity activity;
+	private MimicData mimic;
+	private final boolean[] likedpositions = new boolean[50];
 	private LayoutInflater layoutinflater;
 	private ArrayList<MimicData> mimicdata;
+	int initialposition = -1;  
+	private int mPlayingPosition = not_playing;
+	private static int not_playing = -1;
+	public boolean mStartPlaying;
+	public Handler mHandler = new Handler();
+	private PlaybackUpdater mProgressUpdater = new PlaybackUpdater();
+	private MediaPlayer player = new MediaPlayer();
+	public SeekBar seekbar;
+	private final boolean[] mHighlightedPositions = new boolean[100];
+	private boolean checker = true;
+	
 	
 	public profileadapter(Activity a, LayoutInflater l, ArrayList <MimicData> m){
 		
@@ -49,17 +74,151 @@ public class profileadapter extends BaseAdapter implements OnClickListener{
 	@Override
 	public View getView(int pos, View ConvertView, ViewGroup parent) {
 		
-		MyViewHolder holder;
+		final MyViewHolder holder;
 		if (ConvertView == null){
 			ConvertView = layoutinflater.inflate(R.layout.profrows, parent, false);
 			holder = new MyViewHolder();
-			holder.title = (TextView) ConvertView.findViewById(R.id.title);
-			holder.likesnum= (TextView) ConvertView.findViewById(R.id.likesnum);
-			holder.commentnum= (TextView) ConvertView.findViewById(R.id.commentnum);
-			holder.sharenum= (TextView) ConvertView.findViewById(R.id.sharenum);
-			
+			holder.description= (TextView) ConvertView.findViewById(R.id.commentpagedescription);
+			holder.likesnum= (TextView) ConvertView.findViewById(R.id.commentpagelikecount);
+			holder.echonum= (TextView) ConvertView.findViewById(R.id.commentpageechocount);
+			holder.commentnum= (TextView) ConvertView.findViewById(R.id.commentpagereplycount);
+			holder.timestamp = (TextView) ConvertView.findViewById(R.id.profilepagetimestamp); 
 			
 			ConvertView.setTag(holder);
+			holder.sb = (SeekBar) ConvertView.findViewById(R.id.commentpageseekBar);
+			holder.like = (ImageButton) ConvertView.findViewById(R.id.commentpagelike);
+			holder.like.setFocusable(false);
+			holder.like.setOnClickListener(new OnClickListener(){
+
+				@Override
+				
+					public void onClick(View v) {
+						final liking likes = new liking();
+						final dislike dislike = new dislike();	
+						int y = holder.postid;
+						int a = (Integer) v.getTag();
+						final String x = Integer.toString(y);
+						if (likedpositions[a] == true){
+							mimic.setLikes(false);
+							likedpositions[a] = false;
+							dislike.execute(x);
+							//notifyDataSetChanged();
+							Log.d("what is ", "play: "+ mimic.getLikes());
+							holder.like.setImageResource(R.drawable.like);			
+						}else if (likedpositions[a] == false){
+						
+							likes.execute(x);
+							Log.d("what is x", x);
+							mimic.setLikes(true);
+							likedpositions[a] = true;
+							//notifyDataSetChanged();
+							Log.d("what is ", "play: "+ mimic.getLikes());
+							holder.like.setImageResource(R.drawable.liked);
+						}
+							
+					
+					}
+						
+					
+				
+		
+			});
+			
+			holder.reply = (ImageButton) ConvertView.findViewById(R.id.commentpagereply);
+	        holder.reply.setOnClickListener(new OnClickListener(){
+
+					@Override
+					public void onClick(View v) {
+					
+						Intent intent = new Intent(activity, comment.class);
+						int y = holder.postid;
+						intent.putExtra("postid", y);
+						
+						activity.startActivity(intent);
+						
+					}
+		        	
+		        	
+		        });
+			holder.play = (ImageButton) ConvertView.findViewById(R.id.commentpageplays);
+	        holder.play.setFocusable(false);
+	        holder.play.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					int position = (Integer)v.getTag();
+				    Log.d("clicked", "Button row pos click: " + position);
+				    String url = holder.posturl;
+				    
+				    RelativeLayout layout = (RelativeLayout)v.getParent();
+				    ImageButton button = (ImageButton)layout.getChildAt(2);
+				    
+				    seekbar = (SeekBar) layout.getChildAt(4);
+				    
+				    
+				    ListView lv = (ListView) layout.getParent();
+				    for (int i=0; i < lv.getChildCount(); i++){
+				    	RelativeLayout row = (RelativeLayout) lv.getChildAt(i);
+				    	ImageButton btns = (ImageButton) row.getChildAt(2);
+				    	btns.setImageResource(R.drawable.playbutton);
+				    	
+				    }
+				    
+				    if(initialposition!=-1)
+				    {
+				    	if(mHighlightedPositions[position]) {
+				    	button.setImageResource(R.drawable.playbutton);
+				        mHighlightedPositions[position] = false;
+				        stopPlayback();
+				        
+				    }	else {
+				    	button.setImageResource(R.drawable.stopbutton);
+				        mHighlightedPositions[position] = true;
+				        mHighlightedPositions[initialposition]=false;
+				        if (player.isPlaying()){
+				        	player.stop();
+				        	mPlayingPosition = position;
+				        	mProgressUpdater.mBarToUpdate = seekbar;
+				     
+				        	mHandler.postDelayed(mProgressUpdater, 500);
+				        	
+				        	startPlaying(url);
+				  	      
+				    	} else{
+				    		mPlayingPosition = position;
+				    		mProgressUpdater.mBarToUpdate = seekbar;
+				    	
+				            mHandler.postDelayed(mProgressUpdater, 500);
+				    	  		startPlaying(url);
+				    		
+				    	}
+				   }
+				    }
+				    else {
+				    	button.setImageResource(R.drawable.stopbutton);
+				    	mHighlightedPositions[position] = true;
+				    	if (player.isPlaying()){
+				    		player.stop();
+				    		mPlayingPosition = position;
+				    		mProgressUpdater.mBarToUpdate = seekbar;
+				    
+				            mHandler.postDelayed(mProgressUpdater, 500);
+				    		startPlaying(url);
+				    		
+				    	}else
+				    	{
+				    		mPlayingPosition = position;
+				    		mProgressUpdater.mBarToUpdate = seekbar;
+				    	
+				            mHandler.postDelayed(mProgressUpdater, 500);
+				    		startPlaying(url);
+				    	
+				    	}
+				    
+				    }
+				    initialposition = position;
+			}
+				});
 			
 		}
 		else{
@@ -68,12 +227,52 @@ public class profileadapter extends BaseAdapter implements OnClickListener{
 		
 		ConvertView.setOnClickListener(this);
 		
-		MimicData mimic = mimicdata.get(pos);
+		mimic = mimicdata.get(pos);
 		holder.mimic = mimic;
-		holder.title.setText(mimic.gettitle());
+		holder.description.setText(mimic.getsharecount());
 		holder.likesnum.setText(mimic.getlikecounter());
-		holder.sharenum.setText(mimic.getsharecount());
 		holder.commentnum.setText(mimic.getcommentcounter());
+		holder.timestamp.setText(mimic.gettime());
+		holder.play.setTag(pos);
+		holder.posturl = mimic.getposturl();
+		holder.postid = mimic.getpostid();
+		holder.like.setTag(pos);
+		
+		if (checker == true){
+			for (int i=0; i<mimicdata.size(); i++)				
+			{
+				mimic = mimicdata.get(i);
+				holder.liked = mimic.getLikes();
+				
+			if (holder.liked == true){
+				likedpositions[i] = true;				
+			}else {
+				likedpositions[i] = false;
+			}
+			checker = false;
+			}
+			}
+		if (likedpositions[pos]){
+			holder.like.setImageResource(R.drawable.liked);
+		}else{
+			holder.like.setImageResource(R.drawable.like);
+		}
+		
+		
+		if(mHighlightedPositions[pos]) {
+			holder.play.setImageResource(R.drawable.ic_action_stop);
+			mProgressUpdater.mBarToUpdate = holder.sb;
+			mHandler.postDelayed(mProgressUpdater, 100);
+	    }else {
+	    	holder.play.setImageResource(R.drawable.play);
+	    	holder.sb.setProgress(0);
+	    	if (mProgressUpdater.mBarToUpdate == holder.sb){
+	    		mProgressUpdater.mBarToUpdate = null;
+	    	}
+	    }
+		
+		
+		
 		
 		return ConvertView;
 		
@@ -84,5 +283,65 @@ public class profileadapter extends BaseAdapter implements OnClickListener{
 		// TODO Auto-generated method stub
 		
 	}
+	private void startPlaying(String url) {
+        // TODO Auto-generated method stub
+		
+        try {
+        	
+            player.reset();
+            player.setDataSource(url);
+            // mPlayer.setDataSource(mFileName);
+            player.prepareAsync();
+            player.setOnPreparedListener(new OnPreparedListener() {
+				
+				@Override
+				public void onPrepared(MediaPlayer mp) {
+					
+					player.start();
+					
+					
+					
+		
+			            	
+			            }
+			          });
+ 
+
+        } catch (IOException e) {
+            Log.e("preparefailed", "prepare() failed");
+            stopPlayback();
+        }
+
+    }
+	
+	private void stopPlayback()
+    {
+        mPlayingPosition = not_playing;;
+        mProgressUpdater.mBarToUpdate = null;
+        player.stop();
+     
+    }
+	public class PlaybackUpdater implements Runnable {
+        public ProgressBar mBarToUpdate = null;
+
+        @Override
+        public void run() {
+            if ((mPlayingPosition != not_playing) && (null != mBarToUpdate)) {
+                mBarToUpdate.setProgress( (800*player.getCurrentPosition() / player.getDuration()) ); //Cast          
+                mHandler.postDelayed(this, 500);
+               
+                
+            } else {
+                //not playing so stop updating
+            }
+        }
+
+
+
+
+
+
+}
+	
 	
 }
